@@ -59,8 +59,9 @@ def delete_artwork():
         print('Artwork not found')
     
 #Quit the application
+
 def quit_program():
-    ui.message('Thanks! Adios ')
+    ui.message('Thanks! Adios. See you Soon. ')
 
 
 def main():
