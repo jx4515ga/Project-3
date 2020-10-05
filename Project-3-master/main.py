@@ -6,6 +6,7 @@ store = ArtworkArtistDB()
 
 #Creating Menu
 def create_menu():
+    
     print('''
     1. Add new Artist
     2. Add new Artwork
