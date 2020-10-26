@@ -1,20 +1,48 @@
 from unittest import TestCase
+# need to swap out the regular database for a test database before anything else is imported
+import config 
+config.db = 'test.db'
 from artist_artwork_database import Artwork, Artist, ArtworkArtistDB
 from artist_artwork_database import ArtistError, ArtworkError
 import ui
 import os
+import sqlite3
 
 class TestArtwork(TestCase):
 
     # Checking if Artist info is saved in database
     def test_check_artist_in_data(self):
-        TestArtist = ArtworkArtistDB()
-        TestArtist.add_artist('ArtworkArtistDB')
-        self.assertIn('Test ArtworkArtistDB', TestArtist.add_artist)
 
-        TestArtist.add_artist('Another Artist Test')
-        self.assertIn('Test ArtworkArtistDB ', TestArtist.add_artist)
-        self.assertIn('Another Test Student', TestArtist.add_artist)
+
+        with sqlite3.connect(config.db) as con:
+            artist_rows = con.execute('delete from artist')  # delete all data from test db
+        con.close()
+
+        store = ArtworkArtistDB()
+
+        # art_artist expects an Artist object so this is an error
+        # database.add_artist('ArtworkArtistDB')
+        example_artist = Artist('Boris', 'example@example.com')
+        store.add_artist(example_artist)
+
+        # TestArtist.add_artist is a function object so this checks if 
+        # the text 'Test ArtworkArtistDB' is in a function definition
+        # self.assertIn('Test ArtworkArtistDB', TestArtist.add_artist)
+
+        # Check if the artist was added
+        con = sqlite3.connect(config.db)
+        artist_rows = con.execute('select * from artist where ArtistName = "Boris" and email = "example@example.com"').fetchall()
+
+        con.close()
+
+        self.assertEqual(1, len(artist_rows))  # one artist matches so add must have worked
+        
+        # TestArtist.add_artist('Another Artist Test')
+        # self.assertIn('Test ArtworkArtistDB ', TestArtist.add_artist)
+        # self.assertIn('Another Test Student', TestArtist.add_artist)
+
+
+
     # Checking if Artwork info is saved in database
     def test_check_artwork_in_data(self):
         TestArtwork = ArtworkArtistDB()
